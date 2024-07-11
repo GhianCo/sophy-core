@@ -1,0 +1,29 @@
+{
+    "name": "sophy/core",
+    "description": "PHP Core Framework",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Sophy\\": "src/"
+        },
+        "files": [
+            "src/Sophy/Helpers/app.php",
+            "src/Sophy/Helpers/string.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "GhianCo",
+            "email": "ghiancorx@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php-di/php-di": "6.4",
+        "slim/http": "1.1",
+        "slim/psr7": "0.3|1.6",
+        "slim/slim": "4.11",
+        "vlucas/phpdotenv": "5.4"
+    }
+}
