@@ -1,5 +1,5 @@
 {
-    "name": "sophy/core",
+    "name": "ghianco/sophy-core",
     "description": "PHP Core Framework",
     "type": "library",
     "license": "MIT",
