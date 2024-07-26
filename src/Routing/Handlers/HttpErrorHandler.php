@@ -1,6 +1,6 @@
 <?php
 
-namespace Sophy\Rounting\Handlers;
+namespace Sophy\Routing\Handlers;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Exception\HttpBadRequestException;
