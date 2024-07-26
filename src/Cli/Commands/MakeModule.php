@@ -92,7 +92,7 @@ class MakeModule extends Command {
         $__srcEntityModel .= PHP_EOL;
         $__srcEntityModel .= "namespace App\\Entity;" . PHP_EOL;
         $__srcEntityModel .= PHP_EOL;
-        $__srcEntityModel .= "use Sophy\Model;" . PHP_EOL;
+        $__srcEntityModel .= "use SophyDB\Model;" . PHP_EOL;
         $__srcEntityModel .= PHP_EOL;
         $__srcEntityModel .= "abstract class " . ucfirst($name) . "Entity extends Model" . PHP_EOL;
         $__srcEntityModel .= "{" . PHP_EOL;
@@ -101,6 +101,7 @@ class MakeModule extends Command {
         $__srcEntityModel .= PHP_EOL;
         $__srcEntityModel .= "    protected \$fillable = [];" . PHP_EOL;
         $__srcEntityModel .= "}";
+        $__srcEntityModel .= PHP_EOL;
 
         $__srcEntityModel = "<?php " . $__srcEntityModel . "?>";
 
@@ -119,6 +120,7 @@ class MakeModule extends Command {
         $__srcEntityModel .= "class " . ucfirst($name) . " extends " . ucfirst($name) . "Entity" . PHP_EOL;
         $__srcEntityModel .= "{" . PHP_EOL;
         $__srcEntityModel .= "}";
+        $__srcEntityModel .= PHP_EOL;
 
         $__srcEntityModel = "<?php " . $__srcEntityModel . "?>";
 
