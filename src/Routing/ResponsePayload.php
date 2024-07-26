@@ -1,6 +1,6 @@
 <?php
 
-namespace Sophy\Rounting;
+namespace Sophy\Routing;
 
 use JsonSerializable;
 use Sophy\Routing\HttpErrorCode;

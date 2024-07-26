@@ -11,7 +11,7 @@ use Slim\Exception\HttpNotFoundException;
 use Slim\Exception\HttpNotImplementedException;
 use Slim\Exception\HttpUnauthorizedException;
 use Slim\Handlers\ErrorHandler as SlimErrorHandler;
-use Sophy\Rounting\ResponsePayload;
+use Sophy\Routing\ResponsePayload;
 use Sophy\Routing\HttpErrorCode;
 use Throwable;
 

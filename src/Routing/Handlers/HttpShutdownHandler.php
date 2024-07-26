@@ -4,7 +4,7 @@ namespace Sophy\Routing\Handlers;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Exception\HttpInternalServerErrorException;
-use Sophy\Rounting\Handlers\HttpErrorHandler;
+use Sophy\Routing\Handlers\HttpErrorHandler;
 use Sophy\Routing\ResponseEmitter;
 
 class HttpShutdownHandler {
