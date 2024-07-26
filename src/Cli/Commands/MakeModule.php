@@ -180,7 +180,7 @@ class MakeModule extends Command {
 
     private function makeRoute($name) {
         $source = $this->templatesDir . 'ObjectbaseRoute.php';
-        $target = $this->appDir . 'route/' . $name . '_route.php';
+        $target = $this->appDir . 'routes/' . $name . '_route.php';
         copy($source, $target);
 
         File::replaceFileContent($target, $name);
