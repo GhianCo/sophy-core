@@ -2,13 +2,6 @@
 
 namespace Sophy\Routing;
 
-use Slim\App as Router;
-use Sophy\Rounting\Handlers\HttpErrorHandler;
-use Sophy\Routing\Handlers\HttpShutdownHandler;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Factory\AppFactory;
-use Slim\Factory\ServerRequestCreatorFactory;
-
 class Route
 {
     public static function load(string $routesDirectory) {
