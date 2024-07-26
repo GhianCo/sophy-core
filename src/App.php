@@ -4,6 +4,7 @@ namespace Sophy;
 
 use DI\Container;
 use DI\ContainerBuilder;
+use Dotenv\Dotenv;
 
 class App
 {
@@ -11,7 +12,7 @@ class App
 
     public static Container $container;
 
-    public static function bootstrap(string $root = null): self
+    public static function bootstrap(string $root): self
     {
         self::$root = $root;
 
@@ -20,6 +21,29 @@ class App
 
         self::$container = $containerBuilder->build();
 
-        return app(self::class);
+        $app = app(self::class);
+
+        return $app->loadConfig()
+                   ->runServiceProviders('boot')
+                   ->runServiceProviders('runtime');
+    }
+
+    protected function loadConfig(): self
+    {
+        date_default_timezone_set(config('app.timezone', 'UTC'));
+
+        Dotenv::createImmutable(self::$root)->load();
+        Config::load(self::$root . "/config");
+
+        return $this;
+    }
+
+    protected function runServiceProviders(string $type): self
+    {
+        foreach (config("providers.$type", []) as $provider) {
+            (new $provider())->registerServices();
+        }
+
+        return $this;
     }
 }
