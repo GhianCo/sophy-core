@@ -104,11 +104,11 @@ class MakeModule extends Command {
 
         $__srcEntityModel = "<?php " . $__srcEntityModel . "?>";
 
-        $dir = $this->appDir . 'Entity/' . ucfirst($name) .'Entity' ;
+        $dir = $this->appDir . 'Entity';
 
         @mkdir($dir, 0777, true);
 
-        File::writeFile($__srcEntityModel, $dir . '/' . ucfirst($name) . ".php");
+        File::writeFile($__srcEntityModel, $dir . '/' . ucfirst($name) . "Entity.php");
 
         $__srcEntityModel = PHP_EOL;
         $__srcEntityModel .= PHP_EOL;
@@ -122,7 +122,7 @@ class MakeModule extends Command {
 
         $__srcEntityModel = "<?php " . $__srcEntityModel . "?>";
 
-        $dir = $this->appDir . 'Model/' . ucfirst($name) .'Entity' ;
+        $dir = $this->appDir . 'Model';
 
         @mkdir($dir, 0777, true);
 
