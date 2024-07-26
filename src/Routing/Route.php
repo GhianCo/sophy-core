@@ -15,6 +15,32 @@ class Route
 
     private static Router $router;
 
+    public static function load(string $routesDirectory) {
+        foreach (glob("$routesDirectory/*.php") as $routes) {
+            require_once $routes;
+        }
+    }
+
+    public static function group(string $uri, $action) {
+        return self::$router->group($uri, $action);
+    }
+
+    public static function get(string $uri, $action) {
+        return self::$router->get($uri, $action);
+    }
+
+    public static function post(string $uri, $action) {
+        return self::$router->post($uri, $action);
+    }
+
+    public static function put(string $uri, $action) {
+        return self::$router->put($uri, $action);
+    }
+
+    public static function delete(string $uri, $action) {
+        return self::$router->delete($uri, $action);
+    }
+
     public static function source()
     {
         self::$router = singleton(Router::class, function () {
