@@ -54,6 +54,8 @@ class Route
             $serverRequestCreator = ServerRequestCreatorFactory::create();
             return $serverRequestCreator->createServerRequestFromGlobals();
         });
+
+        return new static;
     }
 
     public function run()
