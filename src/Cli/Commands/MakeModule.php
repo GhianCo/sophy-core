@@ -37,12 +37,12 @@ class MakeModule extends Command {
         if ($moduleIsValid) {
             $this->makeActions($name);
             $this->makeEntityAndModel($name);
+            $this->makeRoute($name);
+            //$this->addToRoute($name);
             //$this->makeDTO($name);
             //$this->makeException($name);
             //$this->makeRepository($name);
-            //$this->makeRoute($name);
             //$this->makeServices($name);
-            //$this->addToRoute($name);
             //$this->addToRepositoryServiceProvider($name);
 
             $output->writeln("<info>Module created => $name</info>");
@@ -180,7 +180,7 @@ class MakeModule extends Command {
 
     private function makeRoute($name) {
         $source = $this->templatesDir . 'ObjectbaseRoute.php';
-        $target = $this->appDir . ucfirst($name) . '/' . ucfirst($name) . 'Routes.php';
+        $target = $this->appDir . 'route/' . $name . '_route.php';
         copy($source, $target);
 
         File::replaceFileContent($target, $name);
