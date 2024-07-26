@@ -36,7 +36,7 @@ class MakeModule extends Command {
 
         if ($moduleIsValid) {
             $this->makeActions($name);
-            //$this->makeEntity($name);
+            $this->makeEntityAndModel($name);
             //$this->makeDTO($name);
             //$this->makeException($name);
             //$this->makeRepository($name);
@@ -87,45 +87,46 @@ class MakeModule extends Command {
         File::replaceFileContent($target . '/Delete.php', $name);
     }
 
-    private function makeEntity($name) {
-        $__srcEntity = PHP_EOL;
-        $__srcEntity .= PHP_EOL;
-        $__srcEntity .= "namespace App\\" . ucfirst($name) . "\Domain\Entities;" . PHP_EOL;
-        $__srcEntity .= PHP_EOL;
-        $__srcEntity .= "use Sophy\Domain\BaseEntity;" . PHP_EOL;
-        $__srcEntity .= PHP_EOL;
-        $__srcEntity .= "final class " . ucfirst($name) . " extends BaseEntity" . PHP_EOL;
-        $__srcEntity .= "{" . PHP_EOL;
-        $__srcEntity .= PHP_EOL;
-        $__srcEntity .= "    protected \$fillable = [" . PHP_EOL;
-        foreach ($this->infoTable as $indexField => $field) {
-            $__srcEntity .= "        '" . $this->infoTable[$indexField]->key . "'," . PHP_EOL;
-        }
-        $__srcEntity .= "    ];" . PHP_EOL;
+    private function makeEntityAndModel($name) {
+        $__srcEntityModel = PHP_EOL;
+        $__srcEntityModel .= PHP_EOL;
+        $__srcEntityModel .= "namespace App\\Entity;" . PHP_EOL;
+        $__srcEntityModel .= PHP_EOL;
+        $__srcEntityModel .= "use Sophy\Model;" . PHP_EOL;
+        $__srcEntityModel .= PHP_EOL;
+        $__srcEntityModel .= "abstract class " . ucfirst($name) . "Entity extends Model" . PHP_EOL;
+        $__srcEntityModel .= "{" . PHP_EOL;
+        $__srcEntityModel .= "    protected \$table = '".$name."';" . PHP_EOL;
+        $__srcEntityModel .= "    protected \$primaryKey = '".$name."_id';" . PHP_EOL;
+        $__srcEntityModel .= PHP_EOL;
+        $__srcEntityModel .= "    protected \$fillable = [];" . PHP_EOL;
+        $__srcEntityModel .= "}";
 
-        $__srcEntity .= PHP_EOL;
+        $__srcEntityModel = "<?php " . $__srcEntityModel . "?>";
 
-        foreach ($this->infoTable as $indexField => $field) {
-            $field = $this->infoTable[$indexField]->key;
-            $__srcEntity .= "    public function set" . ucwords($field) . "($" . $field . "){ " . PHP_EOL;
-            $__srcEntity .= "        \$this->setAttribute('" . $field . "', \$" . $field . ");" . PHP_EOL;
-            $__srcEntity .= "    }" . PHP_EOL;
-            $__srcEntity .= PHP_EOL;
-
-            $__srcEntity .= "    public function get" . ucwords($field) . "(){ " . PHP_EOL;
-            $__srcEntity .= "        return \$this->getAttribute('" . $field . "');" . PHP_EOL;
-            $__srcEntity .= "    }" . PHP_EOL;
-            $__srcEntity .= PHP_EOL;
-        }
-        $__srcEntity .= "}" . PHP_EOL;
-
-        $__srcEntity = "<?php " . $__srcEntity . "?>";
-
-        $dir = $this->appDir . ucfirst($name) . '/Domain/Entities';
+        $dir = $this->appDir . 'Entity/' . ucfirst($name) .'Entity' ;
 
         @mkdir($dir, 0777, true);
 
-        File::writeFile($__srcEntity, $dir . '/' . ucfirst($name) . ".php");
+        File::writeFile($__srcEntityModel, $dir . '/' . ucfirst($name) . ".php");
+
+        $__srcEntityModel = PHP_EOL;
+        $__srcEntityModel .= PHP_EOL;
+        $__srcEntityModel .= "namespace App\\Model;" . PHP_EOL;
+        $__srcEntityModel .= PHP_EOL;
+        $__srcEntityModel .= "use App\Entity\\".ucfirst($name)."Entity;" . PHP_EOL;
+        $__srcEntityModel .= PHP_EOL;
+        $__srcEntityModel .= "class " . ucfirst($name) . " extends " . ucfirst($name) . "Entity" . PHP_EOL;
+        $__srcEntityModel .= "{" . PHP_EOL;
+        $__srcEntityModel .= "}";
+
+        $__srcEntityModel = "<?php " . $__srcEntityModel . "?>";
+
+        $dir = $this->appDir . 'Model/' . ucfirst($name) .'Entity' ;
+
+        @mkdir($dir, 0777, true);
+
+        File::writeFile($__srcEntityModel, $dir . '/' . ucfirst($name) . ".php");
     }
 
     private function makeDTO($name) {
