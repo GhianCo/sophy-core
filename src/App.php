@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App as Router;
 use Slim\Factory\AppFactory;
 use Slim\Factory\ServerRequestCreatorFactory;
-use Sophy\Rounting\Handlers\HttpErrorHandler;
+use Sophy\Routing\Handlers\HttpErrorHandler;
 use Sophy\Routing\Handlers\HttpShutdownHandler;
 use Sophy\Routing\ResponseEmitter;
 
