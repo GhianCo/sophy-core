@@ -2,50 +2,59 @@
 
 namespace Sophy\Cli\Commands;
 
+use PhpParser\Error;
+use PhpParser\Node;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
+use PhpParser\ParserFactory;
 use Sophy\App;
-use Sophy\Database\DB;
 use Sophy\Helpers\File;
-use Spatie\Regex\Regex;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use PhpParser\PrettyPrinter;
+use PhpParser\Node\Expr\Closure;
+use PhpParser\NodeFinder;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Stmt\Expression;
 
-class MakeModule extends Command {
+class MakeModule extends Command
+{
     protected $templatesDir = '';
     protected $appDir = '';
     protected $infoTable = [];
     protected $output = null;
 
+    public static $moduleName;
+
     protected static $defaultName = "make:module";
     protected static $defaultDescription = "Create a new module";
 
-    protected function configure() {
+    protected function configure()
+    {
         $this->addArgument("name", InputArgument::REQUIRED, "Module name");
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
         $this->output = new ConsoleOutput();
-        $name = $input->getArgument("name");
+        self::$moduleName = $input->getArgument("name");
 
         $this->templatesDir = resourcesDirectory() . '/templates/';
         $this->appDir = App::$root . '/app/';
 
-        $moduleIsValid = $this->validateHasTable($name);
+        $moduleIsValid = $this->validateHasTable();
 
         if ($moduleIsValid) {
-            $this->makeActions($name);
-            $this->makeEntityAndModel($name);
-            $this->makeRoute($name);
-            //$this->addToRoute($name);
-            //$this->makeDTO($name);
-            //$this->makeException($name);
-            //$this->makeRepository($name);
-            //$this->makeServices($name);
-            //$this->addToRepositoryServiceProvider($name);
+            $this->makeActions();
+            $this->makeEntityAndModel();
+            $this->makeRoute();
+            $this->addToRoute();
 
-            $output->writeln("<info>Module created => $name</info>");
+            $output->writeln("<info>Module created =>" . self::$moduleName . "</info>");
 
             return Command::SUCCESS;
         }
@@ -53,7 +62,8 @@ class MakeModule extends Command {
         return Command::FAILURE;
     }
 
-    private function validateHasTable($name) {
+    private function validateHasTable()
+    {
         try {
             /*$query = DB::query('describe ' . $name);
             $dataTable = $query->fetchAll();
@@ -71,33 +81,35 @@ class MakeModule extends Command {
         }
     }
 
-    private function makeActions($name) {
+    private function makeActions()
+    {
         $source = $this->templatesDir . 'ObjectBaseActions';
-        $target = $this->appDir .'Actions/'. ucfirst($name);
+        $target = $this->appDir . 'Actions/' . ucfirst(self::$moduleName);
 
         File::recursiveCopy($source, $target);
 
-        File::replaceFileContent($target . '/Create.php', $name);
-        //File::replaceFileContent($target . '/CreateValidator.php', $name);
-        File::replaceFileContent($target . '/GetAll.php', $name);
-        //File::replaceFileContent($target . '/GetByBody.php', $name);
-        //File::replaceFileContent($target . '/GetByQuery.php', $name);
-        File::replaceFileContent($target . '/GetOne.php', $name);
-        File::replaceFileContent($target . '/Update.php', $name);
-        File::replaceFileContent($target . '/Delete.php', $name);
+        File::replaceFileContent($target . '/Create.php', self::$moduleName);
+        //File::replaceFileContent($target . '/CreateValidator.php', self::$moduleName);
+        File::replaceFileContent($target . '/GetAll.php', self::$moduleName);
+        //File::replaceFileContent($target . '/GetByBody.php', self::$moduleName);
+        //File::replaceFileContent($target . '/GetByQuery.php', self::$moduleName);
+        File::replaceFileContent($target . '/GetOne.php', self::$moduleName);
+        File::replaceFileContent($target . '/Update.php', self::$moduleName);
+        File::replaceFileContent($target . '/Delete.php', self::$moduleName);
     }
 
-    private function makeEntityAndModel($name) {
+    private function makeEntityAndModel()
+    {
         $__srcEntityModel = PHP_EOL;
         $__srcEntityModel .= PHP_EOL;
         $__srcEntityModel .= "namespace App\\Entity;" . PHP_EOL;
         $__srcEntityModel .= PHP_EOL;
         $__srcEntityModel .= "use SophyDB\Model;" . PHP_EOL;
         $__srcEntityModel .= PHP_EOL;
-        $__srcEntityModel .= "abstract class " . ucfirst($name) . "Entity extends Model" . PHP_EOL;
+        $__srcEntityModel .= "abstract class " . ucfirst(self::$moduleName) . "Entity extends Model" . PHP_EOL;
         $__srcEntityModel .= "{" . PHP_EOL;
-        $__srcEntityModel .= "    protected \$table = '".$name."';" . PHP_EOL;
-        $__srcEntityModel .= "    protected \$primaryKey = '".$name."_id';" . PHP_EOL;
+        $__srcEntityModel .= "    protected \$table = '" . self::$moduleName . "';" . PHP_EOL;
+        $__srcEntityModel .= "    protected \$primaryKey = '" . self::$moduleName . "_id';" . PHP_EOL;
         $__srcEntityModel .= PHP_EOL;
         $__srcEntityModel .= "    protected \$fillable = [];" . PHP_EOL;
         $__srcEntityModel .= "}";
@@ -109,15 +121,15 @@ class MakeModule extends Command {
 
         @mkdir($dir, 0777, true);
 
-        File::writeFile($__srcEntityModel, $dir . '/' . ucfirst($name) . "Entity.php");
+        File::writeFile($__srcEntityModel, $dir . '/' . ucfirst(self::$moduleName) . "Entity.php");
 
         $__srcEntityModel = PHP_EOL;
         $__srcEntityModel .= PHP_EOL;
         $__srcEntityModel .= "namespace App\\Model;" . PHP_EOL;
         $__srcEntityModel .= PHP_EOL;
-        $__srcEntityModel .= "use App\Entity\\".ucfirst($name)."Entity;" . PHP_EOL;
+        $__srcEntityModel .= "use App\Entity\\" . ucfirst(self::$moduleName) . "Entity;" . PHP_EOL;
         $__srcEntityModel .= PHP_EOL;
-        $__srcEntityModel .= "class " . ucfirst($name) . " extends " . ucfirst($name) . "Entity" . PHP_EOL;
+        $__srcEntityModel .= "class " . ucfirst(self::$moduleName) . " extends " . ucfirst(self::$moduleName) . "Entity" . PHP_EOL;
         $__srcEntityModel .= "{" . PHP_EOL;
         $__srcEntityModel .= "}";
         $__srcEntityModel .= PHP_EOL;
@@ -128,195 +140,77 @@ class MakeModule extends Command {
 
         @mkdir($dir, 0777, true);
 
-        File::writeFile($__srcEntityModel, $dir . '/' . ucfirst($name) . ".php");
+        File::writeFile($__srcEntityModel, $dir . '/' . ucfirst(self::$moduleName) . ".php");
     }
 
-    private function makeDTO($name) {
-        $__srcEntity = PHP_EOL;
-        $__srcEntity .= PHP_EOL;
-        $__srcEntity .= "namespace App\\" . ucfirst($name) . "\Application\DTO;" . PHP_EOL;
-        $__srcEntity .= PHP_EOL;
-        $__srcEntity .= "final class " . ucfirst($name) . "DTO" . PHP_EOL;
-        $__srcEntity .= "{" . PHP_EOL;
-        foreach ($this->infoTable as $indexField => $field) {
-            $__srcEntity .= "    public $" . $this->infoTable[$indexField]->key . ";" . PHP_EOL;
-        }
-
-        $__srcEntity .= "}" . PHP_EOL;
-
-        $__srcEntity = "<?php " . $__srcEntity . "?>";
-
-        $dir = $this->appDir . ucfirst($name) . '/Application/DTO';
-
-        @mkdir($dir, 0777, true);
-
-        File::writeFile($__srcEntity, $dir . '/' . ucfirst($name) . "DTO.php");
-    }
-
-    private function makeException($name) {
-        $source = $this->templatesDir . 'ObjectbaseException.php';
-        $target = $this->appDir . ucfirst($name) . '/Domain/Exceptions/' . ucfirst($name) . 'Exception.php';
-
-        @mkdir($this->appDir . ucfirst($name) . '/Domain');
-        @mkdir($this->appDir . ucfirst($name) . '/Domain/Exceptions');
-        copy($source, $target);
-
-        File::replaceFileContent($target, $name);
-    }
-
-    private function makeRepository($name) {
-        $iSource = $this->templatesDir . 'IObjectbaseRepository.php';
-        $source = $this->templatesDir . 'ObjectbaseRepository.php';
-
-        @mkdir($this->appDir . ucfirst($name) . '/Infrastructure');
-        $iTarget = $this->appDir . ucfirst($name) . '/Domain/I' . ucfirst($name) . 'Repository.php';
-        $target = $this->appDir . ucfirst($name) . '/Infrastructure/' . ucfirst($name) . 'RepositoryMysql.php';
-        copy($iSource, $iTarget);
-        copy($source, $target);
-
-        File::replaceFileContent($iTarget, $name);
-        File::replaceFileContent($target, $name);
-    }
-
-    private function makeRoute($name) {
+    private function makeRoute()
+    {
         $source = $this->templatesDir . 'ObjectbaseRoute.php';
-        $target = $this->appDir . 'routes/' . $name . '_route.php';
+        $target = $this->appDir . 'routes/' . self::$moduleName . '_route.php';
         copy($source, $target);
 
-        File::replaceFileContent($target, $name);
-    }
-
-    private function makeServices($name) {
-        $source = $this->templatesDir . 'ObjectbaseServices';
-        $target = $this->appDir . ucfirst($name) . '/Application/Services';
-
-        File::recursiveCopy($source, $target);
-
-        File::replaceFileContent($target . '/Base.php', $name);
-        File::replaceFileContent($target . '/CreateService.php', $name);
-        File::replaceFileContent($target . '/FindService.php', $name);
-        File::replaceFileContent($target . '/UpdateService.php', $name);
-        File::replaceFileContent($target . '/DeleteService.php', $name);
+        File::replaceFileContent($target, self::$moduleName);
     }
 
     //Todo: Falta validar al no existir el archivo
-    private function addToRoute($name) {
+    private function addToRoute()
+    {
         $locationRouteFile = App::$root . '/routes/api.php';
-        $routeModule = ucfirst($name) . 'Routes::group($group);';
-        $useRouteModule = 'use App\\' . ucfirst($name) . '\\' . ucfirst($name) . 'Routes;';
 
-        if (file_exists($locationRouteFile) && File::stringInFileFound($locationRouteFile, $routeModule)) {
+        $code = file_get_contents($locationRouteFile);
+
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
+        try {
+            $ast = $parser->parse($code);
+        } catch (Error $error) {
+            echo "Parse error: {$error->getMessage()}\n";
+            return;
+        }
+        $nodeFinder = new NodeFinder;
+
+        $apiRoutes = $nodeFinder->find($ast, function (Node $node) {
+            return $node instanceof Node\Scalar\String_ && $node->value == '/' . MakeModule::$moduleName . '_route.php';
+        });
+
+        if (count($apiRoutes)) {
             return false;
         }
 
-        $fileRoutesApi = @fopen($locationRouteFile, 'r');
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(new class extends NodeVisitorAbstract
+        {
+            public function enterNode(Node $node)
+            {
+                if ($node instanceof Closure) {
+                    $requireExpr = new FuncCall(
+                        new Node\Name('require'),
+                        [new Variable('routesDirectory . \'/' . MakeModule::$moduleName . '_route.php\'')]
+                    );
+
+                    $callExpr = new FuncCall(
+                        $requireExpr,
+                        [
+                            new Node\Arg(
+                                new Variable('group')
+                            )
+                        ]
+                    );
+
+                    $newNode = new Expression($callExpr);
+                    $node->stmts[] = $newNode; // Añadir al principio
+                }
+            }
+        });
+
+        $ast = $traverser->traverse($ast);
+
+        $prettyPrinter = new PrettyPrinter\Standard;
+        $nodes = $prettyPrinter->prettyPrintFile($ast);
 
         $dir = App::$root . '/routes';
 
-        if ($fileRoutesApi) {
-            $startFunctionFound = false;
-            $endFunctionFound = false;
+        @mkdir($dir, 0777, true);
 
-            $routeApiLines = '';
-            while (!feof($fileRoutesApi)) {
-                $currentLine = fgets($fileRoutesApi);
-                if (!$startFunctionFound) {
-                    //$startFunctionFound = Regex::match('/function\s*([A-z0-9]+)?\s*\((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*\)\s*\{(?:[^}{]+|\{(?:[^}{]+|\{[^}{]*\})*\})/', $currentLine)->hasMatch();
-                }
-
-                if ($startFunctionFound && !$endFunctionFound) {
-                    //$endFunctionFound = Regex::match('/\}/', $currentLine)->hasMatch();
-                }
-
-                if ($startFunctionFound && $endFunctionFound) {
-                    $routeApiLines .= '    ' . $routeModule . PHP_EOL;
-
-                    preg_match_all('/^(.*\buse\b.*)$/m', $routeApiLines, $allOperatorUse);
-
-                    if (count($allOperatorUse)) {
-                        $lastOperatorFound = $allOperatorUse[count($allOperatorUse) - 1];
-                        $lastOperatorFound = $lastOperatorFound[count($lastOperatorFound) - 1];
-                        $routeApiLines = str_replace(trim($lastOperatorFound), trim($lastOperatorFound . PHP_EOL . $useRouteModule), $routeApiLines);
-                    }
-                    $startFunctionFound = false;
-                    $endFunctionFound = false;
-                }
-                $routeApiLines .= $currentLine;
-            }
-
-            @mkdir($dir, 0777, true);
-
-            File::writeFile($routeApiLines, $dir . '/api.php');
-        } else {
-            $__srcEntity = PHP_EOL;
-            $__srcEntity .= PHP_EOL;
-            $__srcEntity .= "use App\DefaultAction;" . PHP_EOL;
-            $__srcEntity .= "use Sophy\Routing\Route;" . PHP_EOL;
-            $__srcEntity .= PHP_EOL;
-            $__srcEntity .= "Route::get('/', DefaultAction::class);" . PHP_EOL;
-            $__srcEntity .= PHP_EOL;
-            $__srcEntity .= "Route::group('/api', function (\$group) {" . PHP_EOL;
-            $__srcEntity .= PHP_EOL;
-            $__srcEntity .= "});" . PHP_EOL;
-
-            $__srcEntity = "<?php " . $__srcEntity;
-
-            @mkdir($dir, 0777, true);
-
-            File::writeFile($__srcEntity, $dir . '/api.php');
-
-            $this->addToRoute($name);
-        }
-    }
-
-    private function addToRepositoryServiceProvider($name) {
-        $locationRepositoryServiceProviderFile = App::$root . '/app/Providers/RepositoryServiceProvider.php';
-        $repositoryServiceProviderModule = 'App::$container->set(I' . ucfirst($name) . 'Repository::class, \DI\autowire(' . ucfirst($name) . 'RepositoryMysql::class)->method(\'setTable\', \'' . $name . '\'));';
-        $useRepositoryServiceProviderModule = 'use App\\' . ucfirst($name) . '\Domain\I' . ucfirst($name) . 'Repository;' .PHP_EOL. 'use App\\' . ucfirst($name) . '\Infrastructure\\' . ucfirst($name) . 'RepositoryMysql;';
-
-        if (file_exists($locationRepositoryServiceProviderFile) && File::stringInFileFound($locationRepositoryServiceProviderFile, $repositoryServiceProviderModule)) {
-            return false;
-        }
-
-        $fileRepositoryServiceProviderApi = @fopen($locationRepositoryServiceProviderFile, 'r');
-
-        $dir = App::$root . '/app/Providers';
-
-        if ($fileRepositoryServiceProviderApi) {
-            $startFunctionFound = false;
-            $endFunctionFound = false;
-
-            $repositoryServieProviderApiLines = '';
-
-            while (!feof($fileRepositoryServiceProviderApi)) {
-                $currentLine = fgets($fileRepositoryServiceProviderApi);
-                if (!$startFunctionFound) {
-                    //$startFunctionFound = Regex::match('/^.*\bfunction\b.*$/m', $currentLine)->hasMatch();
-                }
-
-                if ($startFunctionFound && !$endFunctionFound) {
-                    //$endFunctionFound = Regex::match('/\}/', $currentLine)->hasMatch();
-                }
-
-                if ($startFunctionFound && $endFunctionFound) {
-                    $repositoryServieProviderApiLines .= '        ' . $repositoryServiceProviderModule . PHP_EOL;
-
-                    preg_match_all('/^(.*\buse\b.*)$/m', $repositoryServieProviderApiLines, $allOperatorUse);
-
-                    if (count($allOperatorUse)) {
-                        $lastOperatorFound = $allOperatorUse[count($allOperatorUse) - 1];
-                        $lastOperatorFound = $lastOperatorFound[count($lastOperatorFound) - 1];
-                        $repositoryServieProviderApiLines = str_replace(trim($lastOperatorFound), trim($lastOperatorFound . PHP_EOL . $useRepositoryServiceProviderModule), $repositoryServieProviderApiLines);
-                    }
-                    $startFunctionFound = false;
-                    $endFunctionFound = false;
-                }
-                $repositoryServieProviderApiLines .= $currentLine;
-            }
-
-            @mkdir($dir, 0777, true);
-
-            File::writeFile($repositoryServieProviderApiLines, $dir . '/RepositoryServiceProvider.php');
-        }
+        File::writeFile($nodes, $dir . '/api.php');
     }
 }
