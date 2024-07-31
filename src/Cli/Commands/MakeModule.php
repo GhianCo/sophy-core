@@ -146,7 +146,7 @@ class MakeModule extends Command
     private function makeRoute()
     {
         $source = $this->templatesDir . 'ObjectbaseRoute.php';
-        $target = $this->appDir . 'routes/' . self::$moduleName . '_route.php';
+        $target = App::$root . '/routes/' . self::$moduleName . '_route.php';
         copy($source, $target);
 
         File::replaceFileContent($target, self::$moduleName);
