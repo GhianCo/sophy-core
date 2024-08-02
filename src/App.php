@@ -28,10 +28,7 @@ class App
     {
         self::$root = $root;
 
-        $containerBuilder = new ContainerBuilder();
-        $containerBuilder->useAutowiring(true);
-
-        self::$container = $containerBuilder->build();
+        self::buildContainer();
 
         $app = app(self::class);
 
@@ -39,6 +36,13 @@ class App
             ->runServiceProviders('boot')
             ->setHttpHandlers()
             ->runServiceProviders('runtime');
+    }
+
+    public static function buildContainer() {
+        $containerBuilder = new ContainerBuilder();
+        $containerBuilder->useAutowiring(true);
+
+        self::$container = $containerBuilder->build();
     }
 
     protected function loadConfig(): self
