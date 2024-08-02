@@ -1,6 +1,6 @@
 <?php
 
-namespace Sophy\Routing;
+namespace Sophy\Http;
 
 use JsonSerializable;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace Sophy\Routing\Handlers;
+namespace Sophy\Http\Handlers;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Exception\HttpInternalServerErrorException;
-use Sophy\Routing\Handlers\HttpErrorHandler;
-use Sophy\Routing\ResponseEmitter;
+use Sophy\Http\Handlers\HttpErrorHandler;
+use Sophy\Http\ResponseEmitter;
 
 class HttpShutdownHandler {
     private Request $request;

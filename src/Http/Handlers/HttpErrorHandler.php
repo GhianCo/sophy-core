@@ -1,8 +1,8 @@
 <?php
 
-namespace Sophy\Routing\Handlers;
+namespace Sophy\Http\Handlers;
 
-use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ResponseInterface as IResponse;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpException;
 use Slim\Exception\HttpForbiddenException;
@@ -11,15 +11,15 @@ use Slim\Exception\HttpNotFoundException;
 use Slim\Exception\HttpNotImplementedException;
 use Slim\Exception\HttpUnauthorizedException;
 use Slim\Handlers\ErrorHandler as SlimErrorHandler;
-use Sophy\Routing\ResponsePayload;
-use Sophy\Routing\HttpErrorCode;
+use Sophy\Http\Response;
+use Sophy\Http\HttpErrorCode;
 use Throwable;
 
 class HttpErrorHandler extends SlimErrorHandler {
     /**
      * @inheritdoc
      */
-    protected function respond(): Response {
+    protected function respond(): IResponse {
         $exception = $this->exception;
         $statusCode = 500;
         $error = new HttpErrorCode(
@@ -53,7 +53,7 @@ class HttpErrorHandler extends SlimErrorHandler {
             $error->setDescription($exception->getMessage());
         }
 
-        $payload = new ResponsePayload($statusCode, null, null, null, $error);
+        $payload = new Response($statusCode, null, null, null, $error);
         $encodedPayload = json_encode($payload, JSON_PRETTY_PRINT);
 
         $response = $this->responseFactory->createResponse($statusCode);

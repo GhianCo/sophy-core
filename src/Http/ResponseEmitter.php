@@ -1,6 +1,6 @@
 <?php
 
-namespace Sophy\Routing;
+namespace Sophy\Http;
 
 use Psr\Http\Message\ResponseInterface;
 use Slim\ResponseEmitter as SlimResponseEmitter;
