@@ -7,6 +7,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpNotFoundException;
 use Sophy\Exceptions\SophyException;
+use Sophy\View\View;
 
 abstract class Action {
     protected Request $request;
@@ -83,5 +84,13 @@ abstract class Action {
         return $this->response
             ->withHeader('Content-Type', 'application/json')
             ->withStatus($payload->getStatusCode());
+    }
+
+    public function view(string $view, array $params = [], string $layout = null): Response {
+        $content = app(View::class)->render($view, $params, $layout);
+        $this->response->getBody()->write($content);
+
+        return $this->response
+            ->withHeader('Content-Type', "text/html");
     }
 }
