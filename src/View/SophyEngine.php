@@ -14,6 +14,10 @@ class SophyEngine implements View {
     }
 
     public function render(string $view, array $params = [], string $layout = null): string {
+        if (is_null($layout)){
+            return $this->renderView($view, $params);
+        }
+        
         $layoutContent = $this->renderLayout($layout ?? $this->defaultLayout);
         $viewContent = $this->renderView($view, $params);
 
