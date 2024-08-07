@@ -187,8 +187,8 @@ class MakeModule extends Command
                 if ($node instanceof Closure) {
                     $requireExpr = new Include_(
                         new Concat(
-                            new Variable('routesDirectory'),
-                            new String_('/ghianco_route.php')
+                            new Variable('routesDirectory/'),
+                            new String_(MakeModule::$moduleName . '_route.php\'')
                         ),
                         Include_::TYPE_REQUIRE
                     );
