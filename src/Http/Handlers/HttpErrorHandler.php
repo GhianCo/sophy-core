@@ -11,7 +11,7 @@ use Slim\Exception\HttpNotFoundException;
 use Slim\Exception\HttpNotImplementedException;
 use Slim\Exception\HttpUnauthorizedException;
 use Slim\Handlers\ErrorHandler as SlimErrorHandler;
-use Sophy\Http\Response;
+use Sophy\Actions\ActionPayload;
 use Sophy\Http\HttpErrorCode;
 use Throwable;
 
@@ -53,7 +53,7 @@ class HttpErrorHandler extends SlimErrorHandler {
             $error->setDescription($exception->getMessage());
         }
 
-        $payload = new Response($statusCode, null, null, null, $error);
+        $payload = new ActionPayload($statusCode, null, null, null, $error);
         $encodedPayload = json_encode($payload, JSON_PRETTY_PRINT);
 
         $response = $this->responseFactory->createResponse($statusCode);

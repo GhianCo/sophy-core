@@ -292,4 +292,17 @@ class File
 
         return $valid;
     }
+
+    public static function fileOutput(string $phpFile, array $params = []): string
+    {
+        foreach ($params as $param => $value) {
+            $$param = $value;
+        }
+
+        ob_start();
+
+        include_once $phpFile;
+
+        return ob_get_clean();
+    }
 }

@@ -7,9 +7,12 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpNotFoundException;
 use Sophy\Exceptions\SophyException;
-use Sophy\View\View;
+use Sophy\View\Html;
+use Sophy\View\Pdf;
+use Sophy\View\ViewStrategy;
 
-abstract class Action {
+abstract class Action
+{
     protected Request $request;
 
     protected Response $response;
@@ -20,7 +23,8 @@ abstract class Action {
      * @throws HttpNotFoundException
      * @throws HttpBadRequestException
      */
-    public function __invoke(Request $request, Response $response, array $args): Response {
+    public function __invoke(Request $request, Response $response, array $args): Response
+    {
         $this->request = $request;
         $this->response = $response;
         $this->args = $args;
@@ -46,7 +50,8 @@ abstract class Action {
     /**
      * @return array|object
      */
-    protected function getFormData() {
+    protected function getFormData()
+    {
         return $this->request->getParsedBody();
     }
 
@@ -54,7 +59,8 @@ abstract class Action {
      * @return mixed
      * @throws HttpBadRequestException
      */
-    protected function resolveArg(string $name) {
+    protected function resolveArg(string $name)
+    {
         if (!isset($this->args[$name])) {
             throw new HttpBadRequestException($this->request, "Could not resolve argument `{$name}`.");
         }
@@ -65,19 +71,22 @@ abstract class Action {
     /**
      * @param array|object|null $data
      */
-    protected function respondWithData($data = null, $message = null, $pagination = null, int $code = 200): Response {
+    protected function respondWithData($data = null, $message = null, $pagination = null, int $code = 200): Response
+    {
         $payload = new ActionPayload($code, $data, $message, $pagination);
 
         return $this->respond($payload);
     }
 
-    protected function respondWithError($error, $message = null, int $code = 200): Response {
+    protected function respondWithError($error, $message = null, int $code = 200): Response
+    {
         $payload = new ActionPayload($code, null, $message, null, $error);
 
         return $this->respond($payload);
     }
 
-    protected function respond(ActionPayload $payload): Response {
+    protected function respond(ActionPayload $payload): Response
+    {
         $json = json_encode($payload, JSON_PRETTY_PRINT);
         $this->response->getBody()->write($json);
 
@@ -86,11 +95,19 @@ abstract class Action {
             ->withStatus($payload->getStatusCode());
     }
 
-    public function view(string $view, array $params = [], string $layout = null): Response {
-        $content = app(View::class)->render($view, $params, $layout);
+    public function view(string $view, array $params = [], string $layout = null, string $type = 'html'): Response
+    {
+        $content = app(ViewStrategy::class)->setStrategy(new Html($view, $layout))->compile($view, $params);
         $this->response->getBody()->write($content);
 
         return $this->response
             ->withHeader('Content-Type', "text/html");
+    }
+
+    public function pdf(string $view, string $name = null, $outputDest = 'I'): Response
+    {
+        app(ViewStrategy::class)->setStrategy(new Pdf($name, $outputDest))->compile($view);
+        return $this->response
+            ->withHeader('Content-Type', "application/pdf");
     }
 }
