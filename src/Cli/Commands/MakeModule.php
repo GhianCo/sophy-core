@@ -4,6 +4,7 @@ namespace Sophy\Cli\Commands;
 
 use PhpParser\Error;
 use PhpParser\Node;
+use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
@@ -18,7 +19,9 @@ use PhpParser\PrettyPrinter;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\NodeFinder;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\Include_;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Expression;
 
 class MakeModule extends Command
@@ -182,9 +185,12 @@ class MakeModule extends Command
             public function enterNode(Node $node)
             {
                 if ($node instanceof Closure) {
-                    $requireExpr = new FuncCall(
-                        new Node\Name('require'),
-                        [new Variable('routesDirectory . \'/' . MakeModule::$moduleName . '_route.php\'')]
+                    $requireExpr = new Include_(
+                        new Concat(
+                            new Variable('routesDirectory'),
+                            new String_('/ghianco_route.php')
+                        ),
+                        Include_::TYPE_REQUIRE
                     );
 
                     $callExpr = new FuncCall(
