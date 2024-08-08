@@ -70,7 +70,7 @@ class App
         $this->router = singleton(Router::class, function () {
             AppFactory::setContainer(self::$container);
             $router = AppFactory::create();
-            $router->setBasePath('/' . config("app.path_route"));
+            $router->setBasePath(config("app.path_route"));
             return $router;
         });
 

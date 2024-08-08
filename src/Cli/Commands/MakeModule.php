@@ -172,7 +172,7 @@ class MakeModule extends Command
         $nodeFinder = new NodeFinder;
 
         $apiRoutes = $nodeFinder->find($ast, function (Node $node) {
-            return $node instanceof Node\Scalar\String_ && $node->value == MakeModule::$moduleName . '_route.php';
+            return $node instanceof Node\Scalar\String_ && $node->value == '/' . MakeModule::$moduleName . '_route.php';
         });
 
         if (count($apiRoutes)) {
@@ -188,7 +188,7 @@ class MakeModule extends Command
                     $requireExpr = new Include_(
                         new Concat(
                             new Variable('routesDirectory'),
-                            new String_(MakeModule::$moduleName . '_route.php')
+                            new String_('/' . MakeModule::$moduleName . '_route.php')
                         ),
                         Include_::TYPE_REQUIRE
                     );
