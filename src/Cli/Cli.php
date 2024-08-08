@@ -7,6 +7,7 @@ use Sophy\App;
 use Dotenv\Dotenv;
 use Sophy\Cli\Commands\MakeModule;
 use Sophy\Config;
+use Sophy\Database\Drivers\IDBDriver;
 use Symfony\Component\Console\Application;
 
 class Cli {
@@ -20,6 +21,8 @@ class Cli {
 
         Dotenv::createImmutable($root)->load();
         Config::load($root . "/config");
+
+        app(IDBDriver::class)->connect();
 
         foreach (config("providers.cli") as $provider) {
             (new $provider())->registerServices();
