@@ -22,8 +22,6 @@ class Cli {
         Dotenv::createImmutable($root)->load();
         Config::load($root . "/config");
 
-        app(IDBDriver::class)->connect();
-
         foreach (config("providers.cli") as $provider) {
             (new $provider())->registerServices();
         }
