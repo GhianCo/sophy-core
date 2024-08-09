@@ -9,7 +9,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App as Router;
 use Slim\Factory\AppFactory;
 use Slim\Factory\ServerRequestCreatorFactory;
-use Sophy\Database\Drivers\IDBDriver;
 use Sophy\Http\Handlers\HttpErrorHandler;
 use Sophy\Http\Handlers\HttpShutdownHandler;
 use Sophy\Http\ResponseEmitter;
@@ -24,8 +23,6 @@ class App
 
     public Router $router;
 
-    public IDBDriver $database;
-
     public static function bootstrap(string $root): self
     {
         self::$root = $root;
@@ -37,7 +34,6 @@ class App
         return $app->loadConfig()
             ->runServiceProviders('boot')
             ->setHttpHandlers()
-            ->setUpDatabaseConnection()
             ->runServiceProviders('runtime');
     }
 
@@ -82,11 +78,6 @@ class App
         return $this;
     }
 
-    protected function setUpDatabaseConnection(): self {
-        $this->database = app(IDBDriver::class);
-        return $this;
-    }
-
     public function run()
     {
         $env = config('app.env');
@@ -112,6 +103,5 @@ class App
         // Run App & Emit Response
         $responseEmitter = new ResponseEmitter();
         $responseEmitter->emit($this->router->handle($this->request));
-        $this->database->close();
     }
 }
