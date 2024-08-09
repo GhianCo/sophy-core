@@ -2,7 +2,7 @@
 
 namespace Sophy\View;
 
-use App\Consts;
+use Sophy\Consts;
 use Sophy\Exceptions\NotFoundException;
 
 class ViewContext

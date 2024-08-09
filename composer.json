@@ -27,6 +27,7 @@
         "vlucas/phpdotenv": "5.4",
         "vlucas/valitron": "1.4",
         "symfony/console": "5.4",
-        "nikic/php-parser": "5.1"
+        "nikic/php-parser": "5.1",
+        "mpdf/mpdf": "8.1"
     }
 }
