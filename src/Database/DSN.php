@@ -87,7 +87,11 @@ class DSN implements Serializable
 
             $dsn .= "dbname=$db_name;";
 
-            $dsn .= "charset=$charset;";
+            if (strtolower($driver) ==  'sqlsrv') {
+                $dsn = str_replace("dbname", ':database', str_replace(":host", ':server', $dsn));
+            } else{
+                $dsn .= "charset=$charset;";
+            }
 
             return $dsn;
         });
