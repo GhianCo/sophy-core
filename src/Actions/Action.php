@@ -57,6 +57,14 @@ abstract class Action
 
     /**
      * @return mixed
+     */
+    protected function getAttribute($name, $default = null)
+    {
+        return $this->request->getAttribute($name, $default);
+    }
+
+    /**
+     * @return mixed
      * @throws HttpBadRequestException
      */
     protected function resolveArg(string $name)
