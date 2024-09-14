@@ -12,6 +12,8 @@ use Slim\Factory\ServerRequestCreatorFactory;
 use Sophy\Http\Handlers\HttpErrorHandler;
 use Sophy\Http\Handlers\HttpShutdownHandler;
 use Sophy\Http\ResponseEmitter;
+use Sophy\Session\Session;
+use Sophy\Session\SessionStorage;
 
 class App
 {
@@ -22,6 +24,8 @@ class App
     public Request $request;
 
     public Router $router;
+
+    public Session $session;
 
     public static function bootstrap(string $root): self
     {
@@ -74,6 +78,8 @@ class App
             $serverRequestCreator = ServerRequestCreatorFactory::create();
             return $serverRequestCreator->createServerRequestFromGlobals();
         });
+
+        $this->session = singleton(Session::class, fn () => new Session(app(SessionStorage::class)));
 
         if (isset($_SERVER['HTTP_ORIGIN'])) {
             header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
