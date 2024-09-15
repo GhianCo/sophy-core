@@ -35,7 +35,7 @@ class Session
         $this->storage->set(self::FLASH_KEY, $flash);
     }
 
-    public function flash(string $key, mixed $value)
+    public function flash($key, $value)
     {
         $this->storage->set($key, $value);
         $flash = $this->storage->get(self::FLASH_KEY);
@@ -43,27 +43,27 @@ class Session
         $this->storage->set(self::FLASH_KEY, $flash);
     }
 
-    public function id(): string
+    public function id()
     {
         return $this->storage->id();
     }
 
-    public function get(string $key, $default = null)
+    public function get($key, $default = null)
     {
         return $this->storage->get($key, $default);
     }
 
-    public function set(string $key, mixed $value)
+    public function set($key, $value)
     {
         return $this->storage->set($key, $value);
     }
 
-    public function has(string $key): bool
+    public function has($key)
     {
         return $this->storage->has($key);
     }
 
-    public function remove(string $key)
+    public function remove($key)
     {
         return $this->storage->remove($key);
     }
