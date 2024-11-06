@@ -3,8 +3,10 @@
 namespace Sophy\Actions;
 
 use JsonSerializable;
+use Sophy\Http\HttpErrorCode;
 
-class ActionPayload implements JsonSerializable {
+class ActionPayload implements JsonSerializable
+{
     private int $code;
 
     /**
@@ -21,7 +23,7 @@ class ActionPayload implements JsonSerializable {
      */
     private $pagination;
 
-    private ActionError $error;
+    private HttpErrorCode $error;
 
     public function __construct(
         int $code = 200,
@@ -37,37 +39,43 @@ class ActionPayload implements JsonSerializable {
         $this->error = $error;
     }
 
-    public function getStatusCode(): int {
+    public function getStatusCode(): int
+    {
         return $this->code;
     }
 
     /**
      * @return array|null|object
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->data;
     }
 
     /**
      * @return string|object
      */
-    public function getMessage() {
+    public function getMessage()
+    {
         return $this->message;
     }
 
     /**
      * @return null|object
      */
-    public function getPagination() {
+    public function getPagination()
+    {
         return $this->pagination;
     }
 
-    public function getError(): ?ActionError {
+    public function getError(): ?HttpErrorCode
+    {
         return $this->error;
     }
 
     #[\ReturnTypeWillChange]
-    public function jsonSerialize(): array {
+    public function jsonSerialize(): array
+    {
         $payload = [
             'code' => $this->code
         ];
@@ -78,13 +86,13 @@ class ActionPayload implements JsonSerializable {
 
         if ($this->data !== null) {
             $payload['data'] = $this->data;
+
+            if ($this->pagination !== null) {
+                $payload['pagination'] = $this->pagination;
+            }
         } elseif ($this->error !== null) {
             $payload['type'] = $this->error->getType();
             $payload['message'] = $this->error->getDescription();
-        }
-
-        if ($this->pagination !== null) {
-            $payload['pagination'] = $this->pagination;
         }
 
         return $payload;
