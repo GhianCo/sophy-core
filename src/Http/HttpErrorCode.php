@@ -18,12 +18,12 @@ class HttpErrorCode implements JsonSerializable
 
     private string $type;
 
-    private string $description;
+    private string $message;
 
-    public function __construct(string $type, ?string $description)
+    public function __construct(string $type, ?string $message)
     {
         $this->type = $type;
-        $this->description = $description;
+        $this->message = $message;
     }
 
     public function getType(): string
@@ -39,12 +39,12 @@ class HttpErrorCode implements JsonSerializable
 
     public function getDescription(): string
     {
-        return $this->description;
+        return $this->message;
     }
 
-    public function setDescription(?string $description = null): self
+    public function setDescription(?string $message = null): self
     {
-        $this->description = $description;
+        $this->message = $message;
         return $this;
     }
 
@@ -53,7 +53,7 @@ class HttpErrorCode implements JsonSerializable
     {
         $payload = [
             'type' => $this->type,
-            'description' => $this->description,
+            'message' => $this->message,
         ];
 
         return $payload;
