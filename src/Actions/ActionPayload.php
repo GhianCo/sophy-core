@@ -21,7 +21,7 @@ class ActionPayload implements JsonSerializable {
      */
     private $pagination;
 
-    private $error;
+    private ActionError $error;
 
     public function __construct(
         int $code = 200,
@@ -79,7 +79,8 @@ class ActionPayload implements JsonSerializable {
         if ($this->data !== null) {
             $payload['data'] = $this->data;
         } elseif ($this->error !== null) {
-            $payload['error'] = $this->error;
+            $payload['type'] = $this->error->getType();
+            $payload['message'] = $this->error->getDescription();
         }
 
         if ($this->pagination !== null) {
