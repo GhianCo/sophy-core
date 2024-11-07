@@ -23,7 +23,7 @@ class ActionPayload implements JsonSerializable
      */
     private $pagination;
 
-    private HttpErrorCode $error;
+    private $error;
 
     public function __construct(
         int $code = 200,
