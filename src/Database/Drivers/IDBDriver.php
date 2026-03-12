@@ -27,5 +27,8 @@ interface IDBDriver
 
     public function close();
 
-    public function statement(string $query, array $bind = []): mixed;
+    /**
+     * @return array
+     */
+    public function statement(string $query, array $bind = []): array;
 }

@@ -2,9 +2,7 @@
 
 namespace Sophy\Database;
 
-use Serializable;
-
-class DSN implements Serializable
+class DSN
 {
 
     public const UTF8 = 'utf8';
@@ -46,24 +44,24 @@ class DSN implements Serializable
     }
 
     /**
-     * Serialize the dsnString object
+     * PHP 7.4+ native serialization support.
      *
-     * @return string
+     * @return array
      */
-    public function serialize()
+    public function __serialize(): array
     {
-        return serialize($this->__invoke());
+        return ['dsn' => $this->__invoke()];
     }
 
     /**
-     * Unserialize a dsnString object
+     * PHP 7.4+ native unserialization support.
      *
-     * @param string $serialized
-     * @return dsnString
+     * @param array $data
      */
-    public function unserialize($serialized)
+    public function __unserialize(array $data): void
     {
-        return $this;
+        $dsn = $data['dsn'];
+        $this->dsnString = static function () use ($dsn): string { return $dsn; };
     }
 
     /**

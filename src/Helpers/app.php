@@ -39,12 +39,12 @@ function database()
     return app()->database;
 }
 
-function isDev()
+function isDev(): bool
 {
-    return $_SERVER['HTTP_HOST'] == 'localhost';
+    return config('app.env') === 'dev';
 }
 
-function isProd()
+function isProd(): bool
 {
     return !isDev();
 }

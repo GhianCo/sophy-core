@@ -130,9 +130,12 @@ class PDODriver implements IDBDriver
         return $this->pdo->lastInsertId();
     }
 
-    public function statement(string $query, array $bind = []): mixed
+    /**
+     * @return array
+     */
+    public function statement(string $query, array $bind = []): array
     {
-        $statement = $this->pdo->prepare($query);
+        $statement = $this->pdo()->prepare($query);
         $statement->execute($bind);
 
         return $statement->fetchAll(PDO::FETCH_ASSOC);

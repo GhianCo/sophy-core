@@ -44,7 +44,14 @@ class MakeModule extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->output = new ConsoleOutput();
-        self::$moduleName = $input->getArgument("name");
+
+        $name = $input->getArgument("name");
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $name)) {
+            $output->writeln('<error>Module name must start with a letter and contain only letters, numbers, and underscores.</error>');
+            return Command::FAILURE;
+        }
+
+        self::$moduleName = $name;
 
         $this->templatesDir = resourcesDirectory() . '/templates/';
         $this->appDir = App::$root . '/app/';

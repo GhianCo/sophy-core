@@ -14,8 +14,9 @@ class Container {
             App::$container->set($class, autowire($build));
             return new $build();
         } elseif (is_callable($build)) {
-            App::$container->set($class, $build());
-            return $build();
+            $instance = $build();
+            App::$container->set($class, $instance);
+            return $instance;
         }
     }
 

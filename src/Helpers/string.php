@@ -3,10 +3,10 @@
 function snake_case(string $str): string {
     $snake_cased = [];
     $skip = [' ', '-', '_', '/', '\\', '|', ',', '.', ';', ':'];
-
+    $len = strlen($str);
     $i = 0;
 
-    while ($i < strlen($str)) {
+    while ($i < $len) {
         $last = count($snake_cased) > 0
             ? $snake_cased[count($snake_cased) - 1]
             : null;
@@ -18,21 +18,25 @@ function snake_case(string $str): string {
             $snake_cased[] = strtolower($character);
         } elseif (ctype_lower($character)) {
             $snake_cased[] = $character;
-        } elseif (in_array($character, $skip)) {
+        } elseif (in_array($character, $skip, true)) {
             if ($last !== '_') {
                 $snake_cased[] = '_';
             }
-            while ($i < strlen($str) && in_array($str[$i], $skip)) {
+            while ($i < $len && in_array($str[$i], $skip, true)) {
                 $i++;
             }
         }
     }
 
-    if ($snake_cased[0] == '_') {
+    if (empty($snake_cased)) {
+        return '';
+    }
+
+    if ($snake_cased[0] === '_') {
         $snake_cased[0] = '';
     }
 
-    if ($snake_cased[count($snake_cased) - 1] == '_') {
+    if ($snake_cased[count($snake_cased) - 1] === '_') {
         $snake_cased[count($snake_cased) - 1] = '';
     }
 
