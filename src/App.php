@@ -105,7 +105,9 @@ class App
         date_default_timezone_set(config('app.timezone', 'UTC'));
 
         // Create Error Handler
-        $errorHandler = new HttpErrorHandler($this->router->getCallableResolver(), $this->router->getResponseFactory());
+        $errorHandler = self::$container->has(HttpErrorHandler::class)
+            ? self::$container->get(HttpErrorHandler::class)
+            : new HttpErrorHandler($this->router->getCallableResolver(), $this->router->getResponseFactory());
 
         // Create Shutdown Handler
         register_shutdown_function(new HttpShutdownHandler($this->request, $errorHandler, $env == 'dev'));
