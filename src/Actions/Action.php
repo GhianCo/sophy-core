@@ -48,11 +48,19 @@ abstract class Action
     abstract protected function action(): Response;
 
     /**
-     * @return array|object
+     * @return array|object en primer nivel
      */
     protected function getFormData()
     {
         return $this->request->getParsedBody();
+    }
+
+    /**
+     * @return object
+     */
+    protected function getBody(): object
+    {
+        return json_decode(json_encode($this->request->getParsedBody() ?? []));
     }
 
     /**
