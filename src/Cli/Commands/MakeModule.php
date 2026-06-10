@@ -115,9 +115,12 @@ class MakeModule extends Command
         $__srcEntityModel .= "namespace App\\Entity;" . PHP_EOL;
         $__srcEntityModel .= PHP_EOL;
         $__srcEntityModel .= "use SophyDB\Model;" . PHP_EOL;
+        $__srcEntityModel .= "use Sophy\Database\Concerns\HasAuditFields;" . PHP_EOL;
         $__srcEntityModel .= PHP_EOL;
         $__srcEntityModel .= "abstract class " . ucfirst(self::$moduleName) . "Entity extends Model" . PHP_EOL;
         $__srcEntityModel .= "{" . PHP_EOL;
+        $__srcEntityModel .= "    use HasAuditFields;" . PHP_EOL;
+        $__srcEntityModel .= PHP_EOL;
         $__srcEntityModel .= "    protected \$table = '" . self::$moduleName . "';" . PHP_EOL;
         $__srcEntityModel .= "    protected \$primaryKey = '" . self::$moduleName . "_id';" . PHP_EOL;
         $__srcEntityModel .= PHP_EOL;
